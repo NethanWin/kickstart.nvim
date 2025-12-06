@@ -1,5 +1,26 @@
---[[
+vim.opt.tabstop = 4 -- Number of visual spaces per TAB
+vim.opt.shiftwidth = 4 -- Number of spaces for each indentation
+vim.opt.softtabstop = 4 -- Number of spaces a <Tab> counts for editing
+vim.opt.expandtab = true -- Use spaces instead of tabs
+vim.keymap.set('n', '<C-i>', ':HebrewInsert<CR>', { noremap = true, silent = true })
+vim.api.nvim_create_user_command('HebrewInsert', function()
+  local prev_keymap = vim.o.keymap
+  vim.g.hebrew_prev_keymap = prev_keymap
 
+  vim.opt_local.keymap = 'hebrew'
+  --vim.cmd 'startinsert!'
+  vim.cmd('startinsert')
+
+  vim.api.nvim_create_autocmd('InsertLeave', {
+    once = true,
+    callback = function()
+      vim.opt_local.keymap = vim.g.hebrew_prev_keymap or ''
+      vim.g.hebrew_prev_keymap = nil
+    end,
+  })
+end, {})
+
+--[[
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
@@ -271,6 +292,20 @@ require('lazy').setup({
   -- options to `gitsigns.nvim`.
   --
   -- See `:help gitsigns` to understand what the configuration keys do
+  {
+    'alex-popov-tech/store.nvim',
+    dependencies = { 'OXY2DEV/markview.nvim' },
+    opts = {},
+    cmd = 'Store',
+  },
+  {
+    'mcookly/bidi.nvim',
+    opts = {
+      create_user_commands = true, -- Generate user commands to enable and disable bidi-mode
+      default_base_direction = 'LR', -- Options: 'LR' and 'RL'
+      intuitive_delete = true, -- Swap <DEL> and <BS> when using a keymap contra base direction
+    },
+  },
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
@@ -476,6 +511,7 @@ require('lazy').setup({
     },
   },
   {
+
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -1014,3 +1050,9 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    vim.cmd("BidiEnable LR")
+  end,
+  once = true,
+})
