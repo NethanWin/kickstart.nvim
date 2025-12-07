@@ -9,7 +9,7 @@ vim.api.nvim_create_user_command('HebrewInsert', function()
 
   vim.opt_local.keymap = 'hebrew'
   --vim.cmd 'startinsert!'
-  vim.cmd('startinsert')
+  vim.cmd 'startinsert'
 
   vim.api.nvim_create_autocmd('InsertLeave', {
     once = true,
@@ -297,6 +297,12 @@ require('lazy').setup({
     dependencies = { 'OXY2DEV/markview.nvim' },
     opts = {},
     cmd = 'Store',
+  },
+  {
+    'Myzel394/easytables.nvim',
+    config = function()
+      require('easytables').setup {}
+    end,
   },
   {
     'mcookly/bidi.nvim',
@@ -1050,9 +1056,12 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
-vim.api.nvim_create_autocmd("VimEnter", {
+--
+require 'custom.plugins.init'
+
+vim.api.nvim_create_autocmd('VimEnter', {
   callback = function()
-    vim.cmd("BidiEnable LR")
+    vim.cmd 'BidiEnable LR'
   end,
   once = true,
 })
