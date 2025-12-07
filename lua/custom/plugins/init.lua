@@ -4,3 +4,4 @@
 -- See the kickstart.nvim README for more information
 -- return {}
 require 'custom.plugins.easy-tables'
+require 'custom.plugins.bidi'
