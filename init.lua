@@ -2,23 +2,6 @@ vim.opt.tabstop = 4 -- Number of visual spaces per TAB
 vim.opt.shiftwidth = 4 -- Number of spaces for each indentation
 vim.opt.softtabstop = 4 -- Number of spaces a <Tab> counts for editing
 vim.opt.expandtab = true -- Use spaces instead of tabs
-vim.keymap.set('n', '<C-i>', ':HebrewInsert<CR>', { noremap = true, silent = true })
-vim.api.nvim_create_user_command('HebrewInsert', function()
-  local prev_keymap = vim.o.keymap
-  vim.g.hebrew_prev_keymap = prev_keymap
-
-  vim.opt_local.keymap = 'hebrew'
-  --vim.cmd 'startinsert!'
-  vim.cmd 'startinsert'
-
-  vim.api.nvim_create_autocmd('InsertLeave', {
-    once = true,
-    callback = function()
-      vim.opt_local.keymap = vim.g.hebrew_prev_keymap or ''
-      vim.g.hebrew_prev_keymap = nil
-    end,
-  })
-end, {})
 
 --[[
 =====================================================================
@@ -294,22 +277,38 @@ require('lazy').setup({
   -- See `:help gitsigns` to understand what the configuration keys do
   {
     'alex-popov-tech/store.nvim',
+    -- store in nvim
     dependencies = { 'OXY2DEV/markview.nvim' },
     opts = {},
     cmd = 'Store',
   },
   {
     'Myzel394/easytables.nvim',
+    -- create a table with ta tc & te
     config = function()
       require('easytables').setup {}
     end,
   },
   {
     'mcookly/bidi.nvim',
+    -- fix hebrew language
     opts = {
       create_user_commands = true, -- Generate user commands to enable and disable bidi-mode
       default_base_direction = 'LR', -- Options: 'LR' and 'RL'
       intuitive_delete = true, -- Swap <DEL> and <BS> when using a keymap contra base direction
+    },
+  },
+  {
+
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' }, -- if you use the mini.nvim suite
+    -- makes markdown look pretty cool
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {
+      render_modes = true,
     },
   },
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
@@ -667,6 +666,18 @@ require('lazy').setup({
           end
         end,
       })
+      --local lspconfig = vim.lsp.config -- require 'lspconfig'
+      --local lspconfig = require 'lspconfig'
+
+      vim.env._JAVA_OPTIONS = vim.env._JAVA_OPTIONS .. ' -Djdk.xml.totalEntitySizeLimit=10000000 -Djdk.xml.entityExpansionLimit=1000000'
+      vim.lsp.config('ltex', {
+        filetypes = { 'markdown', 'text', 'tex', 'latex' },
+        settings = {
+          ltex = {
+            language = 'en-US',
+          },
+        },
+      })
 
       -- Diagnostic Config
       -- See :help vim.diagnostic.Opts
@@ -758,6 +769,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'ltex',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -1058,10 +1070,3 @@ require('lazy').setup({
 -- vim: ts=2 sts=2 sw=2 et
 --
 require 'custom.plugins.init'
-
-vim.api.nvim_create_autocmd('VimEnter', {
-  callback = function()
-    vim.cmd 'BidiEnable LR'
-  end,
-  once = true,
-})
