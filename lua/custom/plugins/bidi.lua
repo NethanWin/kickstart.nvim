@@ -16,9 +16,19 @@ vim.api.nvim_create_user_command('HebrewInsert', function()
   })
 end, {})
 
-vim.api.nvim_create_autocmd('VimEnter', {
-  callback = function()
+--vim.api.nvim_create_autocmd('VimEnter', {
+-- callback = function()
+-- vim.cmd 'BidiEnable LR'
+-- end,
+-- once = true,
+-- })
+
+-- 'BufWritePost'
+-- 'BufEnter' - on entering file but not save
+-- BufWinEnter - on entering a file in a window
+vim.api.nvim_create_autocmd({ 'BufWritePost', 'BufEnter' }, {
+  group = group,
+  callback = function(args)
     vim.cmd 'BidiEnable LR'
   end,
-  once = true,
 })

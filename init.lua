@@ -671,7 +671,7 @@ require('lazy').setup({
 
       vim.env._JAVA_OPTIONS = vim.env._JAVA_OPTIONS .. ' -Djdk.xml.totalEntitySizeLimit=10000000 -Djdk.xml.entityExpansionLimit=1000000'
       vim.lsp.config('ltex', {
-        filetypes = { 'markdown', 'text', 'tex', 'latex' },
+        filetypes = { 'text', 'tex', 'latex' },
         settings = {
           ltex = {
             language = 'en-US',
@@ -1065,7 +1065,6 @@ require('lazy').setup({
     },
   },
 })
-
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 --
